@@ -1,2 +1,2 @@
 # Api-project
-Final exame of API (Polimi 2022)
+Final exam of API (Polimi 2022)
