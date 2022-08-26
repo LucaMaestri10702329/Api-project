@@ -1,0 +1,29 @@
+node* ricerca_carattere_non_presente(node* tree,int dim,node *test,char c)
+{
+    if(tree == NULL)
+    {
+        return test;
+    }
+    else
+    {
+        int found = 0;
+        int i;
+        for(i=0;i<dim;i++)
+        {
+            printf("Caratteri da confrontare: %c %c\n", tree->key[i],c);
+            if(tree->key[i]==c)
+                found = 1;
+        }
+
+        if(found != 1)
+        {
+            test = insertRec(test,tree->key,dim);
+
+        }
+        test=ricerca_carattere_non_presente(tree->left, dim,test,c);
+        test = ricerca_carattere_non_presente(tree->right,dim,test,c);
+
+    }
+    return test;
+
+}

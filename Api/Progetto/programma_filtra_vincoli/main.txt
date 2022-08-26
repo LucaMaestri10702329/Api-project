@@ -1,0 +1,326 @@
+#include<stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct _node
+{
+    char *key;
+    struct _node *left;
+    struct _node *right;
+} node;
+
+node* ricerca_parola (node *bt, char * info)
+{
+    if((bt == NULL) || (strcmp(info,bt->key) == 0) )
+        return bt;
+    else
+    {
+        if(strcmp(info,bt->key)>0)
+            return ricerca_parola(bt->right, info);
+        else
+            return ricerca_parola(bt->left,info);
+    }
+}
+
+void word_checker(char *rif, char *word, int dim, node *filtrate)
+{
+    char temp[dim];
+    int check = 0;
+    int i;
+    for(i = 0; i<dim;i++)
+    {
+        temp[i] = rif[i];
+    }
+    for( i=0;i<dim;i++)
+    {
+        if(rif[i]==word[i])
+        {
+            printf("+");
+            //filtrate = ricerca_parola_pos_corretta(rif[i],i,filtrate);
+        }
+
+        else {
+            int j;
+            check = 0;
+            for(j=0;j<dim;j++)
+            {
+                if(word[i] == temp[j])
+                {
+                    printf("|");
+                    //filtrate = ricerca_parola_pos_corretta(rif[i],filtrate);
+                    temp[j] = '*';
+                    check = 1;
+                    break ;
+                }
+            }
+            if(check == 0)
+            {
+                printf("/");
+                int k = 0, pres = 0;
+                /*for(k=0;k<dim;k++)
+                {
+                    if(word[i] == rif[k])
+                      pres = 1; break;
+                }
+                 if(pres == 1)
+                    filtrate = ricerca_parola_pos_non_corretta2
+                else
+                    filtrate = ricerca_parola_non_contenuta
+                 */
+            }
+
+        }
+    }
+    printf("\n");
+}
+
+node* insertRec(node *tree, char *input,int dim)
+{
+    node *new=(node*) malloc(sizeof(node));
+    new->key = malloc(dim * sizeof(char));
+    strcpy(new->key, input);
+
+    new->left=NULL;
+    new->right=NULL;
+
+    if(tree==NULL)
+    {
+        return new;
+    }
+
+    if((strcmp(tree->key, input)>=0))
+        tree->left=insertRec(tree->left, input,dim);
+    else
+        tree->right=insertRec(tree->right, input,dim);
+
+    return tree;
+}
+
+
+void stampa_albero(node* tree)
+{
+    if(tree == NULL)
+    {
+        return;
+    }
+
+
+    stampa_albero(tree->left);
+    printf("%s\n", tree->key);
+    stampa_albero(tree->right);
+}
+
+
+
+
+
+node * binarytree_destroy(node * bt)
+{
+    if( bt == NULL)
+    {
+        return NULL;
+    }
+    else if((bt->left == NULL) && (bt->right == NULL))
+    {
+        free(bt->key);
+        free(bt);
+        return NULL;
+    }
+
+    else
+    {
+        bt->left = binarytree_destroy(bt->left);
+        bt->right = binarytree_destroy(bt->right);
+
+        free(bt->key);
+        free(bt);
+        return bt;
+    }
+}
+
+node* deleteBinaryTree(node* bt)
+{
+    // Caso base: albero vuoto
+    if (bt == NULL) {
+        return NULL;
+    }
+
+    // elimina prima il sottoalbero sinistro e destro (Postorder)
+    deleteBinaryTree(bt->left);
+    deleteBinaryTree(bt->right);
+
+    // elimina il nodo corrente dopo aver eliminato il suo sottoalbero sinistro e destro
+    free(bt->key);
+    free(bt);
+
+    // imposta root come null prima di restituire
+    return NULL;
+}
+
+node * binarytree_min(node * bt)
+{
+    if(bt == NULL)
+        return NULL;
+    else if(bt->left == NULL)
+        return bt;
+    else
+    {
+        node * min = binarytree_min(bt->left);
+        return min;
+    }
+}
+
+node* binarytree_delete(node* bt, char *info)
+{
+    if(bt == NULL)
+        return NULL;
+    else if(strcmp(bt->key,info)>1)
+    {
+        bt->left = binarytree_delete(bt->left, info);
+        return bt;
+    }
+    else if(strcmp(info, bt->key)>1)
+    {
+        bt->right = binarytree_delete(bt->right,info);
+        return bt;
+    }
+
+    else {
+        node * min_right;
+        if((bt->right == NULL))
+        {
+            free(bt->key);
+            free(bt);
+            return NULL;
+        }
+        if(bt->right == NULL)
+        {
+            node * alias;
+            alias = bt->left;
+            free(bt->key);
+            free(bt);
+            return alias;
+        }
+        if(bt->left == NULL)
+        {
+            node * alias;
+            alias = bt->right;
+            free(bt->key);
+            free(bt);
+            return alias;
+        }
+
+        min_right = binarytree_min(bt->right);
+        strcpy(bt->key,min_right->key);
+
+        bt->right = binarytree_delete(bt->right, min_right->key);
+        return bt;
+    }
+}
+
+/*
+node* ricerca_pos_esatta(node* tree,int dim,node *test)
+{
+    if(tree == NULL)
+    {
+        return test;
+    }
+    else
+    {
+        if(tree->key[1] == 's')
+        {
+            test = insertRec(test,tree->key,dim);
+        }
+        test=ricerca_pos_esatta(tree->left, dim,test);
+        //printf("%s\n", tree->key);
+        test = ricerca_pos_esatta(tree->right,dim,test);
+
+    }
+    return test;
+
+}
+*/
+
+node* ricerca_pos_esatta(node * bt)
+{
+    if(bt == NULL)
+        return NULL;
+    else
+    {
+        printf("carattere: %c\n",bt->key[1]);
+        if(bt->key[1] == 's')
+        {
+            bt = binarytree_delete(bt,bt->key);
+            stampa_albero(bt);
+        }
+    }
+    bt = ricerca_pos_esatta(bt->left);
+    bt = ricerca_pos_esatta(bt->right);
+    return bt;
+}
+
+int main()
+{
+    unsigned int dim, err, tent, check2 = 0,check1=0;
+    node * bt = NULL;
+    node * filtrate = NULL;
+    node * test = NULL;
+    //leggo il numero di parole da leggere
+    err=fscanf(stdin, "%d\n", &dim);
+    printf("Dimensione delle parole: %d\n", dim);
+    dim++;
+
+
+    char c ;
+    char *p = (char*) malloc(dim*sizeof(char));
+    while(1)
+    {
+
+        fgets(p,dim,stdin);
+        c = getchar_unlocked();
+        //printf("%s\n",&(*p));
+
+        if(p[0] == '+')
+        {
+            while(getchar_unlocked()!='\n')
+            {
+                //printf("_%c",c);
+            }
+            //printf("\n");
+            break;
+        }
+
+        else
+
+            bt = insertRec(bt,p,dim);
+            filtrate = insertRec(filtrate,p,dim);
+
+    }
+
+    printf("Stampa dell'albero: \n");
+    stampa_albero(bt);
+    /*printf("Stampa della prima parola: %s\n", bt->key);
+    bt = binarytree_delete(bt,bt->key);
+    printf("Stampa dell'albero: \n");
+    stampa_albero(bt);
+    printf("Stampa della prima parola: %s\n", bt->key);
+    bt = binarytree_delete(bt,bt->key);
+     */
+    if(filtrate == NULL)
+        printf("Vuoto\n");
+    else
+        printf("pieno\n");
+    //filtrate = ricerca_pos_esatta(filtrate,dim,test);
+    filtrate = ricerca_pos_esatta(filtrate);
+    test = NULL;
+    if(filtrate == NULL)
+        printf("Vuoto\n");
+    else
+    {
+        printf("Stampa albero filtrato:\n");
+        stampa_albero(filtrate);
+    }
+    bt = deleteBinaryTree(bt);
+    free(p);
+    return 0;
+}
