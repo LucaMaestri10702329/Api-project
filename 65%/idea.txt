@@ -1,7 +1,0 @@
-Per ogni lettera salvi quante volte questa compare nella parola,
-poi al posto di controllare se la parola è presente, salvi direttamente la parola nel vettore presente_n
-
-Con questo metodo provare ad usare solo il booleano, magari aiuta
-
-NB: non funziona anche perchè non hai cambiato l'altra funzione che inserisce le parole all'interno della partita
-i due filtri sono diversi pirla!
